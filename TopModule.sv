@@ -10,7 +10,7 @@ module TopModule(input clk, rst);
               
   logic[3:0]  status, Dest_wb,
               Dest, src1, src2,
-              EXE_CMD, EX_Dest,
+              EXE_CMD, EX_Dest, EX_src1_in, EX_src2_in,
               status_in, EX_Dest_out,
               MEM_Dest, MEM_Dest_out,
               WB_Dest;
@@ -40,8 +40,8 @@ module TopModule(input clk, rst);
 
  ID_EX id_ex(clk, rst, B, control_out[0], control_out[2], control_out[1], imm,
      	     control_out[7], control_out[8], control_out[6:3],
-    	     ID_PC_out, Val_Rn, Val_Rm, shift_op, signed_imm_24, Dest, status[1], EX_PC_in, 
-	     EX_WB_EN, EX_MEM_W_EN, EX_MEM_R_EN, B, S, EX_imm, EXE_CMD, EX_val_Rn, 
+    	     ID_PC_out, Val_Rn, Val_Rm, shift_op, signed_imm_24, Dest, src1, src2, status[1], 
+	     EX_src1_in, EX_src2_in, EX_PC_in, EX_WB_EN, EX_MEM_W_EN, EX_MEM_R_EN, B, S, EX_imm, EXE_CMD, EX_val_Rn, 
 	     EX_val_Rm, EX_shift_oprand, EX_signed_imm_24, EX_Dest, EX_C);
 
  Hazard_Unit HU(rst, src1, src2, EX_Dest, EX_WB_EN, MEM_Dest, MEM_WB_EN, two_src, hazard);

@@ -7,9 +7,10 @@ module ID_EX(
     input [31:0] PC_in, Val_Rn_in, Val_Rm_in,
     input [11:0] shift_op_in,
     input [23:0] signed_imm_24_in,
-    input [3:0] Dest_in,
+    input [3:0] Dest_in, src1_in, src2_in,
     input  C_in,
     
+    output reg [3:0] src1, src2,
     output reg [31:0] PC,
     output reg WB_EN, MEM_W_EN, MEM_R_EN, B, S, imm,
     output reg [3:0] EXE_CMD,
@@ -20,15 +21,18 @@ module ID_EX(
     output reg  C);
 
     
+    
 always@(posedge rst, posedge clk)begin
   if (rst) begin
-    {PC, WB_EN, MEM_W_EN, MEM_R_EN, B, S, imm, EXE_CMD, val_Rn, val_Rm, shift_oprand, signed_imm_24, Dest, C} <= 0;
+    {src1, src2, PC, WB_EN, MEM_W_EN, MEM_R_EN, B, S, imm, EXE_CMD, val_Rn, val_Rm, shift_oprand, signed_imm_24, Dest, C} <= 0;
   end
   else
     if(flush)begin
-      {PC, WB_EN, MEM_W_EN, MEM_R_EN, B, S, imm, EXE_CMD, val_Rn, val_Rm, shift_oprand, signed_imm_24, Dest, C} <= 0; 
+      {src1, src2, PC, WB_EN, MEM_W_EN, MEM_R_EN, B, S, imm, EXE_CMD, val_Rn, val_Rm, shift_oprand, signed_imm_24, Dest, C} <= 0; 
     end
     else begin
+    src1 <= src1_in;
+    src2 <= src2_in;
     PC <= PC_in;
     WB_EN <= WB_EN_in;
     MEM_W_EN <= MEM_W_EN_in;
@@ -47,3 +51,4 @@ always@(posedge rst, posedge clk)begin
 end
    
 endmodule
+
