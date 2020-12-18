@@ -1,9 +1,9 @@
 `timescale 1ns/1ns
 module tb();
   
-  logic rst,clk;  
+  logic rst,clk, is_forwarding;  
   
-  TopModule uut(clk, rst);
+  TopModule uut(clk, rst, is_forwarding);
   
   initial begin
     clk = 1;
@@ -15,6 +15,7 @@ module tb();
 
   initial begin
    rst =  1;
+   is_forwarding = 1;
    #50
    rst = 0;
 

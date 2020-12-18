@@ -1,5 +1,5 @@
 `timescale 1ns/1ns
-module TopModule(input clk, rst);
+module TopModule(input clk, rst, is_forwarding);
   
   logic       hazard, imm, two_src, B, S, 
               EX_WB_EN, EX_MEM_W_EN, EX_MEM_R_EN, EX_imm, EX_C,
@@ -7,7 +7,7 @@ module TopModule(input clk, rst);
               MEM_WB_EN, MEM_MEM_R_EN, MEM_MEM_W_EN,
               MEM_WB_EN_out, MEM_MEM_R_EN_out,
               WB_WB_EN, WB_MEM_R_EN, WB_EN;
-              
+  logic[1:0]  Sel_src1, Sel_src2;          
   logic[3:0]  status, Dest_wb,
               Dest, src1, src2,
               EXE_CMD, EX_Dest, EX_src1_in, EX_src2_in,
@@ -44,12 +44,11 @@ module TopModule(input clk, rst);
 	     EX_src1_in, EX_src2_in, EX_PC_in, EX_WB_EN, EX_MEM_W_EN, EX_MEM_R_EN, B, S, EX_imm, EXE_CMD, EX_val_Rn, 
 	     EX_val_Rm, EX_shift_oprand, EX_signed_imm_24, EX_Dest, EX_C);
 
- Hazard_Unit HU(rst, src1, src2, EX_Dest, EX_WB_EN, MEM_Dest, MEM_WB_EN, two_src, hazard);
- 
+ Hazard_Unit HU(rst, src1, src2, EX_Dest, EX_WB_EN, Mem_Dest, MEM_WB_EN, EX_MEM_R_EN, two_src, is_forwarding, hazard);
  
  EXE exe(clk, rst, EXE_CMD, EX_MEM_R_EN, EX_MEM_W_EN, EX_WB_EN, EX_PC_in, EX_val_Rn, 
-	 EX_val_Rm, EX_imm, EX_shift_oprand, EX_signed_imm_24, EX_C, EX_Dest,
-         EX_PC_out, ALU_result, BranchAddr, EX_Val_Rm_out,
+	       EX_val_Rm, ALU_result_out, Result_WB, EX_imm, EX_shift_oprand, EX_signed_imm_24, EX_C, EX_Dest,
+         Sel_src1, Sel_src2, EX_PC_out, ALU_result, BranchAddr, EX_Val_Rm_out,
          status_in, EX_Dest_out, EX_WB_EN_out, EX_MEM_W_EN_out, EX_MEM_R_EN_out);
 
  EXE_MEM exe_mem(clk, rst, EX_PC_out, ALU_result, EX_Val_Rm_out, EX_WB_EN_out, 
@@ -58,20 +57,23 @@ module TopModule(input clk, rst);
 		 MEM_MEM_R_EN, MEM_MEM_W_EN, MEM_Dest);
  
  Status_Reg SR(clk, rst, S, status_in, status);
+ ForwardingUnit FU(EX_src1_in, EX_src2_in, MEM_WB_EN, MEM_Dest,
+                  WB_EN, Dest_wb, Sel_src1, Sel_src2);
  
  MEM mem(clk, rst, MEM_MEM_W_EN, MEM_MEM_R_EN, MEM_WB_EN,
     	 ALU_result_out, MEM_PC_in, MEM_Val_Rm, MEM_Dest,
  	 MEM_Dest_out, MEM_WB_EN_out, MEM_MEM_R_EN_out, 
     	 MEM_PC_out, MEM_data, MEM_ALU_result); 
 
-MEM_WB mem_wb(clk, rst, MEM_PC_out, MEM_WB_EN_out, MEM_MEM_R_EN_out,
+ MEM_WB mem_wb(clk, rst, MEM_PC_out, MEM_WB_EN_out, MEM_MEM_R_EN_out,
     	      MEM_ALU_result, MEM_data, MEM_Dest_out, 
-	      WB_WB_EN, WB_MEM_R_EN, WB_Dest, 
-	      WB_ALU_result, WB_data, WB_PC_in);
-     
-WB wb(clk, rst, WB_Dest, WB_WB_EN, WB_MEM_R_EN,
-      WB_ALU_result, WB_data, WB_PC_in,
-      Dest_wb, WB_EN, Result_WB);
+	       WB_WB_EN, WB_MEM_R_EN, WB_Dest, 
+	       WB_ALU_result, WB_data, WB_PC_in);
+	       
+	       
+ WB wb(clk, rst, WB_Dest, WB_WB_EN, WB_MEM_R_EN,
+       WB_ALU_result, WB_data, WB_PC_in,
+       Dest_wb, WB_EN, Result_WB);
 
 
 endmodule

@@ -20,6 +20,8 @@ module EXE(
 
  logic mem_en;
  logic[31:0] val1, val2, val_gen_in;
+ 
+ 
  assign val1 = (Sel_src1 == 2'b00) ? val_Rn : ((Sel_src1 == 2'b01) ? ALU_Res : ((Sel_src1 == 2'b10) ? WB_Val : 32'b0));
  assign val_gen_in = (Sel_src2 == 2'b00) ? val_Rm : ((Sel_src2 == 2'b01) ? ALU_Res : ((Sel_src2 == 2'b10) ? WB_Val : 32'b0));
  assign mem_en = MEM_R_EN | MEM_W_EN;
