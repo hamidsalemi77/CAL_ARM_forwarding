@@ -25,7 +25,7 @@ module EXE(
  assign val1 = (Sel_src1 == 2'b00) ? val_Rn : ((Sel_src1 == 2'b01) ? ALU_Res : ((Sel_src1 == 2'b10) ? WB_Val : 32'b0));
  assign val_gen_in = (Sel_src2 == 2'b00) ? val_Rm : ((Sel_src2 == 2'b01) ? ALU_Res : ((Sel_src2 == 2'b10) ? WB_Val : 32'b0));
  assign mem_en = MEM_R_EN | MEM_W_EN;
- assign val_Rm_out = val_Rm;
+ assign val_Rm_out = val_gen_in;
  assign Dest_out = Dest;
  assign WB_EN_out = WB_EN;
  assign MEM_W_EN_out = MEM_W_EN;
